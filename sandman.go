@@ -29,21 +29,19 @@ func GetFunction(module_name string, function_name string) *python.PyObject {
 	return MethodDesired
 
 }
-func Highlight(code string, lexer string, formatter string) string {
+func Highlight(code string, lexer string) string {
+	GetFormatterByName := GetFunction("pygments.formatters", "HtmlFormatter")
+	FormatterArgs := python.PyTuple_New(0)
 
-	// // var Highlighter *python.PyObject
-	// // if PygmentsModule.HasAttrString("highlighter") == 1 {
-	// //	Highlighter = FormatterModule.GetAttrString("highlighter")
-	// // }
-
-	GetFormatterByName := GetFunction("pygments.formatters", "get_formatter_by_name")
-	FormatterArgs := python.PyTuple_New(1)
-	python.PyTuple_SetItem(FormatterArgs, 0, python.PyString_FromString(formatter))
 	Formatter:= GetFormatterByName.CallObject(FormatterArgs)
 
 	if Formatter == nil {
 		log.Fatal("Couldn't get formatter")
 	}
+	if Formatter.HasAttrString("encoding") == 0 {
+		log.Fatal("Wrong formatter")
+	}
+	Formatter.SetAttrString("encoding", python.PyString_FromString("utf-8"))
 
 	GetLexerByName := GetFunction("pygments.lexers", "get_lexer_by_name")
 	LexerArgs := python.PyTuple_New(1)
