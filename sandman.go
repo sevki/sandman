@@ -29,7 +29,12 @@ func GetFunction(module_name string, function_name string) *python.PyObject {
 	return MethodDesired
 
 }
-func Highlight(code string, lexer string) string {
+func Highlight(code string, lexer string, linenos bool) string {
+	lnos := 0
+	if linenos {
+		lnos = 1
+	}
+
 	GetFormatterByName := GetFunction("pygments.formatters", "HtmlFormatter")
 	FormatterArgs := python.PyTuple_New(0)
 
@@ -41,7 +46,12 @@ func Highlight(code string, lexer string) string {
 	if Formatter.HasAttrString("encoding") == 0 {
 		log.Fatal("Wrong formatter")
 	}
+	if Formatter.HasAttrString("linenos") == 0 {
+		log.Fatal("Wrong formatter")
+	}
+
 	Formatter.SetAttrString("encoding", python.PyString_FromString("utf-8"))
+	Formatter.SetAttrString("linenos", python.PyBool_FromLong(lnos))
 
 	GetLexerByName := GetFunction("pygments.lexers", "get_lexer_by_name")
 	LexerArgs := python.PyTuple_New(1)
