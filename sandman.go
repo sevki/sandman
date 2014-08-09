@@ -1,9 +1,14 @@
+// This package highlights a given code snippet with pygments over a python bridge using github.com/sbinet/go-python.
+// Requires pygments package, python and go-python.
+// If go-python doesn't compile correctly try
+// `cd $GOPATH/src/github.com/sevki/sandman/` and `make`
 package sandman
 
 import (
 	"github.com/sbinet/go-python"
 	"log"
 )
+
 
 func init() {
 	err := python.Initialize()
@@ -12,7 +17,7 @@ func init() {
 	}
 }
 
-func GetFunction(module_name string, function_name string) *python.PyObject {
+func getFunction(module_name string, function_name string) *python.PyObject {
 
 	Module := python.PyImport_ImportModule(module_name)
 	if Module == nil {
@@ -29,13 +34,16 @@ func GetFunction(module_name string, function_name string) *python.PyObject {
 	return MethodDesired
 
 }
+// Higlight, higlights the given code snippet with the given lexer name.
+// Adds line numbers if it linenos is true.
+// List of available lexers are: http://lea.cx/pygments-lexers
 func Highlight(code string, lexer string, linenos bool) string {
 	lnos := 0
 	if linenos {
 		lnos = 1
 	}
 
-	GetFormatterByName := GetFunction("pygments.formatters", "HtmlFormatter")
+	GetFormatterByName := getFunction("pygments.formatters", "HtmlFormatter")
 	FormatterArgs := python.PyTuple_New(0)
 
 	Formatter:= GetFormatterByName.CallObject(FormatterArgs)
@@ -53,7 +61,7 @@ func Highlight(code string, lexer string, linenos bool) string {
 	Formatter.SetAttrString("encoding", python.PyString_FromString("utf-8"))
 	Formatter.SetAttrString("linenos", python.PyBool_FromLong(lnos))
 
-	GetLexerByName := GetFunction("pygments.lexers", "get_lexer_by_name")
+	GetLexerByName := getFunction("pygments.lexers", "get_lexer_by_name")
 	LexerArgs := python.PyTuple_New(1)
 	python.PyTuple_SetItem(LexerArgs, 0, python.PyString_FromString(lexer))
 	Lexer:= GetLexerByName.CallObject(LexerArgs)
@@ -61,7 +69,7 @@ func Highlight(code string, lexer string, linenos bool) string {
 		log.Fatal("Couldn't get lexer")
 	}
 
-	Highlighter := GetFunction("pygments", "highlight")
+	Highlighter := getFunction("pygments", "highlight")
 	if Highlighter  == nil{
 		log.Fatal("aaasa")
 	}
