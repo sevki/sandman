@@ -1,14 +1,10 @@
-// This package highlights a given code snippet with pygments over a python bridge using github.com/sbinet/go-python.
-// Requires pygments package, python and go-python.
+// Package sandman implements highlights code using pygments over a
+// python bridge using github.com/sbinet/go-python.
 // If go-python doesn't compile correctly try
 // `cd $GOPATH/src/github.com/sevki/sandman/` and `make`
 package sandman
 
-import (
-	"github.com/sbinet/go-python"
-	"log"
-)
-
+import "log"
 
 func init() {
 	err := python.Initialize()
@@ -17,24 +13,25 @@ func init() {
 	}
 }
 
-func getFunction(module_name string, function_name string) *python.PyObject {
+func getFunction(moduleName string, functionName string) *python.PyObject {
 
-	Module := python.PyImport_ImportModule(module_name)
+	Module := python.PyImport_ImportModule(moduleName)
 	if Module == nil {
-		log.Fatal("Failed to load the "+ module_name+" module")
+		log.Fatal("Failed to load the " + moduleName + " module")
 	}
 
 	var MethodDesired *python.PyObject
-	if Module.HasAttrString(function_name) == 1 {
-		MethodDesired = Module.GetAttrString(function_name)
+	if Module.HasAttrString(functionName) == 1 {
+		MethodDesired = Module.GetAttrString(functionName)
 	}
 	if !MethodDesired.Check_Callable() {
-		log.Fatal(module_name+" is not callable")
+		log.Fatal(moduleName + " is not callable")
 	}
 	return MethodDesired
 
 }
-// Higlight, higlights the given code snippet with the given lexer name.
+
+// Highlight higlights the given code snippet with the given lexer name.
 // Adds line numbers if it linenos is true.
 // List of available lexers are: http://lea.cx/pygments-lexers
 func Highlight(code string, lexer string, linenos bool) string {
@@ -46,7 +43,7 @@ func Highlight(code string, lexer string, linenos bool) string {
 	GetFormatterByName := getFunction("pygments.formatters", "HtmlFormatter")
 	FormatterArgs := python.PyTuple_New(0)
 
-	Formatter:= GetFormatterByName.CallObject(FormatterArgs)
+	Formatter := GetFormatterByName.CallObject(FormatterArgs)
 
 	if Formatter == nil {
 		log.Fatal("Couldn't get formatter")
@@ -64,13 +61,13 @@ func Highlight(code string, lexer string, linenos bool) string {
 	GetLexerByName := getFunction("pygments.lexers", "get_lexer_by_name")
 	LexerArgs := python.PyTuple_New(1)
 	python.PyTuple_SetItem(LexerArgs, 0, python.PyString_FromString(lexer))
-	Lexer:= GetLexerByName.CallObject(LexerArgs)
-	if Lexer == nil{
-		log.Fatal("Couldn't get lexer")
+	Lexer := GetLexerByName.CallObject(LexerArgs)
+	if Lexer == nil {
+		log.Fatal("Couldn't get lexer " + lexer)
 	}
 
 	Highlighter := getFunction("pygments", "highlight")
-	if Highlighter  == nil{
+	if Highlighter == nil {
 		log.Fatal("aaasa")
 	}
 	HighlighterArgs := python.PyTuple_New(3)
