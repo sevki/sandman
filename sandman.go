@@ -1,7 +1,10 @@
-// Package sandman implements highlights code using pygments over a
-// python bridge using github.com/sbinet/go-python.
-// If go-python doesn't compile correctly try
-// `cd $GOPATH/src/github.com/sevki/sandman/` and `make`
+/*
+Package sandman implements highlights code using pygments over a
+python bridge using github.com/sbinet/go-python.
+If go-python doesn't compile correctly try
+	$ cd $GOPATH/src/github.com/sevki/sandman/
+	$ make
+*/
 package sandman
 
 import "log"
