@@ -36,7 +36,7 @@ func getFunction(moduleName string, functionName string) *python.PyObject {
 
 // Highlight higlights the given code snippet with the given lexer name.
 // Adds line numbers if it linenos is true.
-// List of available lexers are: http://lea.cx/pygments-lexers
+// List of available lexers are: sevki.co/3kk2rv
 func Highlight(code string, lexer string, linenos bool) string {
 	lnos := 0
 	if linenos {
