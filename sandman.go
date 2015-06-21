@@ -2,12 +2,16 @@
 Package sandman implements highlights code using pygments over a
 python bridge using github.com/sbinet/go-python.
 If go-python doesn't compile correctly try
-	$ cd $GOPATH/src/github.com/sevki/sandman/
+	$ cd $GOPATH/src/sevki.org/sandman/
 	$ make
 */
-package sandman
+package sandman // import "sevki.org/sandman"
 
-import "log"
+import (
+	"log"
+
+	"github.com/sbinet/go-python"
+)
 
 func init() {
 	err := python.Initialize()
@@ -36,7 +40,7 @@ func getFunction(moduleName string, functionName string) *python.PyObject {
 
 // Highlight higlights the given code snippet with the given lexer name.
 // Adds line numbers if it linenos is true.
-// List of available lexers are: sevki.co/3kk2rv
+// List of available lexers are: https://sevki.co/3kk2rv
 func Highlight(code string, lexer string, linenos bool) string {
 	lnos := 0
 	if linenos {
